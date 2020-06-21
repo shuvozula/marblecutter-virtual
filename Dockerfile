@@ -1,4 +1,4 @@
-FROM quay.io/mojodna/gdal
+FROM andrejreznik/python-gdal:stable
 LABEL maintainer="Seth Fitzsimmons <seth@mojodna.net>"
 
 ARG http_proxy
@@ -21,24 +21,23 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
-    cython \
-    git \
-    python-pip \
-    python-wheel \
-    python-setuptools \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
+
+# links the cert file where its being expected
+RUN mkdir -p /etc/pki/tls/certs/ && \
+    ln -s /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt
 
 WORKDIR /opt/marblecutter
 
 COPY requirements-server.txt /opt/marblecutter/
 COPY requirements.txt /opt/marblecutter/
 
-RUN pip install -U numpy && \
-  pip install -r requirements-server.txt && \
+RUN pip3 install -U numpy && \
+  pip3 install -r requirements-server.txt && \
   rm -rf /root/.cache
 
-COPY virtual /opt/marblecutter/virtual
+COPY . /opt/marblecutter
 
 USER nobody
 
