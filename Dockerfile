@@ -20,6 +20,7 @@ RUN apt-get update \
   && apt-get upgrade -y \
   && apt-get install -y --no-install-recommends \
     build-essential \
+    libpcre3 libpcre3-dev \
     ca-certificates \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
@@ -41,4 +42,4 @@ COPY . /opt/marblecutter
 
 USER nobody
 
-ENTRYPOINT ["gunicorn", "-k", "gevent", "-b", "0.0.0.0", "--access-logfile", "-", "virtual.web:app"]
+ENTRYPOINT ["uwsgi", "uwsgi.ini"]
